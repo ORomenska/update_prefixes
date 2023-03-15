@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      POSGRES_USER: example
+    volumes:
+      - ./files/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - 5432:5432
+
+  s3-minio:
+    image: minio/minio
+    restart: always
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000
+      - 9001:9001
