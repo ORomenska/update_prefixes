@@ -32,43 +32,43 @@ Setup for auto testing
 ----------------------
 
 run in CLI:
-docker-compose up -d
+#docker-compose up -d
 
-pip install virtualenv
-python -m virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
+#pip install virtualenv
+#python -m virtualenv venv
+#source venv/bin/activate
+#pip install -r requirements.txt
 
 
 Setup for manual testing
 ------------------------
 
 run in CLI:
-docker-compose up -d
+#docker-compose up -d
 
-docker-compose exec db /bin/bash
-psql -U postgres -h localhost
-CREATE DATABASE proddatabase;
-\c proddatabase
-CREATE TABLE IF NOT EXISTS avatars (id SERIAL PRIMARY KEY,path VARCHAR);
-CREATE ROLE someuser WITH LOGIN PASSWORD 'somepassword';
-GRANT INSERT,SELECT,UPDATE on TABLE avatars TO someuser;
-GRANT USAGE ON SEQUENCE avatars_id_seq TO someuser;
-exit
-exit
+#docker-compose exec db /bin/bash
+#psql -U postgres -h localhost
+#CREATE DATABASE proddatabase;
+#\c proddatabase
+#CREATE TABLE IF NOT EXISTS avatars (id SERIAL PRIMARY KEY,path VARCHAR);
+#CREATE ROLE someuser WITH LOGIN PASSWORD 'somepassword';
+#GRANT INSERT,SELECT,UPDATE on TABLE avatars TO someuser;
+#GRANT USAGE ON SEQUENCE avatars_id_seq TO someuser;
+#exit
+#exit
 
-docker-compose exec s3-minio /bin/bash
-mkdir /data/legacy-s3 /data/production-s3
-exit
+#docker-compose exec s3-minio /bin/bash
+#mkdir /data/legacy-s3 /data/production-s3
+#exit
 
-pip install virtualenv
-python -m virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
+#pip install virtualenv
+#python -m virtualenv venv
+#source venv/bin/activate
+#pip install -r requirements.txt
 
-export DB_CONN_STRING #it looks like 'postgres://someuser:somepassword@127.0.0.1/proddatabase'
+#export DB_CONN_STRING #it looks like 'postgres://someuser:somepassword@127.0.0.1/proddatabase'
 
-python src/sre_seeder.py number_of_objects
+#python src/sre_seeder.py number_of_objects
 	
 
 Setup for production
@@ -76,9 +76,9 @@ Setup for production
 
 On Database server:
 
-\c prod
-CREATE ROLE someuser WITH LOGIN PASSWORD 'somepassword';
-GRANT SELECT,UPDATE on TABLE avatars TO someuser;
+#\c prod
+#CREATE ROLE someuser WITH LOGIN PASSWORD 'somepassword';
+#GRANT SELECT,UPDATE on TABLE avatars TO someuser;
 
 On AWS:
 
@@ -126,10 +126,10 @@ User's IAM policy should look like:
 
 On machine, where script will be running, in project folder:
 
-pip install virtualenv
-python -m virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
+#pip install virtualenv
+#python -m virtualenv venv
+#source venv/bin/activate
+#pip install -r requirements.txt
 
 2. Run script
 
@@ -158,7 +158,7 @@ There are several unit tests in the project
 
 to start tests execution:
 
-python -m unittest -v tests/test_s3_copy.py
+#python -m unittest -v tests/test_s3_copy.py
 
 These tests are fully utomated - resources are being created at the start of execution and cleaned at the finish. Database user for testing is automatically created via docker-compose.
 
