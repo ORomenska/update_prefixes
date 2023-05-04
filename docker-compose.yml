@@ -20,3 +20,9 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+
+  rabbitmq:
+    image: rabbitmq:3.10
+    restart: always
+    ports:
+      - 5672:5672

@@ -2,18 +2,17 @@ Script for copying S3 objects and modifying DB rows based on S3 object path
 
 1. Files
 
-
 This project consists of:
 
 - script source files in src/ folder
 - script unit tests in tests/ folder
 - pip requirements saved in requirements.txt
 - docker-compose.yml file along with file from files/init.sql for testing environment setup
-
+- Makefile for automation simplicity
 
 2. Project setup
 
-Common requirements
+*Common requirements
 
 These tools should be installed:
 
@@ -32,45 +31,44 @@ Setup for auto testing
 ----------------------
 
 run in CLI:
-#docker-compose up -d
-
-#pip install virtualenv
-#python -m virtualenv venv
-#source venv/bin/activate
-#pip install -r requirements.txt
-
+#make testdockerup
+#make venv
 
 Setup for manual testing
 ------------------------
+*Setup env variables:
 
-run in CLI:
-#docker-compose up -d
+- Mandatory:
 
-#docker-compose exec db /bin/bash
-#psql -U postgres -h localhost
-#CREATE DATABASE proddatabase;
-#\c proddatabase
-#CREATE TABLE IF NOT EXISTS avatars (id SERIAL PRIMARY KEY,path VARCHAR);
-#CREATE ROLE someuser WITH LOGIN PASSWORD 'somepassword';
-#GRANT INSERT,SELECT,UPDATE on TABLE avatars TO someuser;
-#GRANT USAGE ON SEQUENCE avatars_id_seq TO someuser;
-#exit
-#exit
+DB_HOST
+DB_USER
+DB_PASSWD
+DB_CONN_STRING
 
-#docker-compose exec s3-minio /bin/bash
-#mkdir /data/legacy-s3 /data/production-s3
-#exit
+- Optional:
+ 
+S3_LEGACY_BUCKET_NAME
+S3_PROD_BUCKET_NAME
+DB_NAME
 
-#pip install virtualenv
-#python -m virtualenv venv
-#source venv/bin/activate
-#pip install -r requirements.txt
 
-#export DB_CONN_STRING #it looks like 'postgres://someuser:somepassword@127.0.0.1/proddatabase'
+*run in CLI:
+
+#make testdockerup
+#make setuptestdb
+#make setuptests3
+#make venv
+
+*Run seeder script for populate db/s3-minio with objects for test:
 
 #python src/sre_seeder.py number_of_objects
-	
 
+
+Clean resources for consecutive manual runs
+-------------------------------------------
+
+#make cleantest
+	
 Setup for production
 --------------------
 
@@ -124,12 +122,9 @@ User's IAM policy should look like:
 }
 
 
-On machine, where script will be running, in project folder:
+*On machine, where script will be running, in project folder:
 
-#pip install virtualenv
-#python -m virtualenv venv
-#source venv/bin/activate
-#pip install -r requirements.txt
+#make venv
 
 2. Run script
 
@@ -137,7 +132,7 @@ In order to run script you need to complete preparation steps.
 
 Script uses Linux environment variables. For auto test you do need to setup something, as tests will use defaults.
 
-For manual testing and work in production, please make sure that you has set up all required environmnt variables:
+For manual testing and work in production, please make sure that you has set up all required environment variables:
 
 DB_HOST
 DB_NAME
@@ -150,17 +145,17 @@ AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
 AWS_DEFAULT_REGION
 
-If these variables havce not bveen set, defaults is used.
+If these variables have not been set, defaults are used.
 
-3. Run tests
+3. Run autotests
 
 There are several unit tests in the project
 
 to start tests execution:
 
-#python -m unittest -v tests/test_s3_copy.py
+#make runautotest
 
-These tests are fully utomated - resources are being created at the start of execution and cleaned at the finish. Database user for testing is automatically created via docker-compose.
+These tests are fully automated - resources are being created at the start of execution and cleaned at the finish. Database user for testing is automatically created via docker-compose.
 
 4. Performance considerations
 
@@ -171,6 +166,8 @@ There was no Load Testing performed for this project, but for the real life such
 - Average load and capacity of DB instance (to be able to run queries with large sets without overhelming DB instance)
 - Network speed between components of the system involved (machine where script is running, DB instance), including internet connection if some components are outside of the AWS (or for example, private cloud)
 - Amount of resources on machine where script is running
+- Is there database optimization
+- Possibility of multi-threading
 
 For example, on local machine with minio-s3 and postgres containers run locally , script copying 1000 s3 objects, took about 2 minutes, but this results cannot be extrapolated to way bigger object numbers and other conditions.
 
